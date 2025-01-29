@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trenchless</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        @keyframes loadingAnimation {
+            0% {
+                transform: translateX(-100%)
+            }
+            100% {
+                transform: translateX(100%)
+            }
+        }
+
+        .loading-bar {
+            animation: loadingAnimation 2s linear infinite;
+        }
+    </style>
+</head>
+<body class="font-roboto">
+<div class="container mx-auto" id="app">
+    <header class="bg-[#6b685f] text-white py-2 px-4 flex justify-between items-center">
+        <span class="text-lg font-bold">1. TRENCHLESS - 01</span>
+        <div class="flex items-center space-x-4">
+            <div class="text-right">
+                <div class="text-md font-bold">Total: $11,550.00</div>
+                <div class="text-xs text-gray-300">AUD (inc. GST)</div>
+            </div>
+            <button class="text-gray-300 hover:text-white">...</button>
+            <button class="text-gray-300 hover:text-white">^</button>
+        </div>
+    </header>
+    <div v-if="loading" class="relative w-full h-1 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-[#98411b] via-[#a0bec5] to-[#3d617d] w-full h-full loading-bar"></div>
+    </div>
+
+    <section class="mb-12">
+        <div class="bg-[#f4f1ea]">
+            <div class="flex justify-between  text-md font-medium text-gray-500">
+                <button
+                        v-for="(tab, index) in updatedTabs"
+                        :key="index"
+                        @click="activeTab = index"
+                        :class="['flex flex-col p-6 w-full ', activeTab === index ? 'bg-white' : 'bg-[#f4f1ea]']">
+                    <p class="mb-4 text-lg">{{ tab.name}}</p>
+                    <div class="flex gap-4">
+                        <div v-if="selectedMethod !== null && index === 0" class="flex gap-4">
+                            <img :src="selectedMethod?.image" alt="Method Illustration" class="rounded-xs">
+                        </div>
+                        <p class="font-bold text-[#c0bcb1]">{{ tab.description}}</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <main>
+        <div v-if="activeTab === 0">
+            <h1 class="text-3xl font-semibold text-gray-500 mb-6">Select the Method:</h1>
+            <div v-if="!info.methods.length && !loading" class="text-center text-gray-500">
+                No methods available
+            </div>
+            <div v-else class="flex gap-6">
+                <div>
+                    <ul v-if="info.methods.length !== 0" class="flex space-x-4 mb-6">
+                        <li
+                                v-for="method in info.methods"
+                                :key="method.id"
+                                @click="selectMethod(method)"
+                        >
+                            <button
+                                    :class="methodButtonClasses(method)"
+                                    class="px-12 py-1 text-gray-500 font-semibold border border-gray-300 rounded-full">
+                                {{ method.abbreviation }}
+                            </button>
+                        </li>
+                    </ul>
+                    <div v-if="selectedMethod !== null" class="md:col-span-2 flex justify-center">
+                        <img :src="selectedMethod?.image" alt=" {{ selectedMethod?.name }}" class="w-full max-w-xl">
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-500 mb-4">{{ selectedMethod?.name }}</h3>
+                    <div class="text-gray-700 leading-relaxed mb-4 space-y-3"
+                         v-html="selectedMethod?.description"></div>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="activeTab === 1">
+            <h1 class="text-3xl font-semibold text-gray-500 mb-6">Select the Crossing:</h1>
+        </div>
+
+        <div v-if="activeTab === 2">
+            <h1 class="text-3xl font-semibold text-gray-500 mb-6">Select the Sleeve Material and Pipe material:</h1>
+        </div>
+
+        <div v-if="activeTab === 3">
+            <h1 class="text-3xl font-semibold text-gray-500 mb-6">Recommendations</h1>
+        </div>
+
+    </main>
+
+    <footer class="mt-8 flex items-center justify-center">
+    </footer>
+</div>
+
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
